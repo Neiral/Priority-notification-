@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Page Removed — Personal Notice</title>
+  <meta name="description" content="This page has been removed by the owner for personal reasons. Contact the developer for more information." />
+  <!-- Google Fonts (fallbacks in CSS) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #0f1724;
+      --bg2: #071028;
+      --glass: rgba(255,255,255,0.06);
+      --glass-2: rgba(255,255,255,0.04);
+      --accent-1: #7c5cff;
+      --accent-2: #00d4ff;
+      --muted: rgba(255,255,255,0.65);
+      --card-radius: 18px;
+      --max-width: 980px;
+      --shadow: 0 10px 30px rgba(2,6,23,0.6);
+      color-scheme: dark;
+    }
+
+    /* Reset-ish */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body,#app{height:100%}
+    body{
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,0.12), transparent 6%),
+                  radial-gradient(900px 500px at 90% 90%, rgba(0,212,255,0.06), transparent 8%),
+                  linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 100%);
+      color: #eaf2ff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:48px 20px;
+    }
+
+    /* subtle animated gradient overlay */
+    .gradient-orb{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      mix-blend-mode:overlay;
+      opacity:0.7;
+      filter: blur(80px);
+      background: conic-gradient(from 120deg at 50% 50%, rgba(124,92,255,0.18), rgba(0,212,255,0.12), rgba(255,120,120,0.06), rgba(124,92,255,0.16));
+      animation: rotateOrb 18s linear infinite;
+    }
+    @keyframes rotateOrb{
+      from{transform:rotate(0deg)}
+      to{transform:rotate(360deg)}
+    }
+
+    .container{
+      position:relative;
+      width:100%;
+      max-width:var(--max-width);
+      z-index:2;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:center;
+    }
+
+    /* mobile stack */
+    @media (max-width:880px){
+      .container{grid-template-columns:1fr; padding: 18px}
+    }
+
+    .left{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--card-radius);
+      padding:48px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px) saturate(1.05);
+      border: 1px solid rgba(255,255,255,0.03);
+      min-height:320px;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+
+    .title{
+      display:flex;
+      gap:18px;
+      align-items:baseline;
+    }
+    .logo-wrap{
+      width:78px;height:78px;
+      border-radius:14px;
+      background:linear-gradient(135deg,var(--accent-1),var(--accent-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 8px 30px rgba(124,92,255,0.12), inset 0 -6px 18px rgba(0,0,0,0.2);
+      flex-shrink:0;
+    }
+    .logo-wrap svg{width:44px;height:44px;transform:rotate(-12deg)}
+    h1{
+      font-family: "Playfair Display", Georgia, serif;
+      font-size:28px;
+      line-height:1;
+      letter-spacing:-0.02em;
+      color: #fff;
+    }
+    p.lead{
+      color:var(--muted);
+      font-size:15px;
+      max-width:60ch;
+    }
+
+    .notice{
+      margin-top:6px;
+      padding:18px;
+      border-radius:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.03);
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+    }
+    .notice svg{width:36px;height:36px;flex-shrink:0; margin-top:4px}
+
+    .notice .text{
+      font-size:15px;
+      color: #e8f3ff;
+      line-height:1.45;
+    }
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* right card */
+    .right{
+      align-self:stretch;
+      border-radius:20px;
+      padding:28px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.035);
+      box-shadow: 0 18px 50px rgba(3,8,20,0.6);
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      min-width:260px;
+      justify-content:center;
+    }
+
+    .badge{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(124,92,255,0.12), rgba(0,212,255,0.08));
+      font-weight:600;
+      font-size:13px;
+    }
+    .big{
+      font-size:20px;
+      font-weight:700;
+      letter-spacing:-0.01em;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* contact actions */
+    .actions{
+      display:flex;
+      gap:12px;
+      margin-top:6px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      border:0;
+      text-decoration:none;
+      color:inherit;
+      transition: transform .14s ease, box-shadow .14s ease;
+      box-shadow: 0 8px 26px rgba(2,6,23,0.45);
+      background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color: #021225;
+    }
+    .btn.secondary{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,0.04);
+      box-shadow:none;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn:focus{outline:3px solid rgba(124,92,255,0.12);outline-offset:3px}
+
+    /* little tiny link */
+    .more{
+      display:block;
+      margin-top:8px;
+      font-size:13px;
+      color:var(--muted);
+      text-decoration:underline dotted;
+      width:max-content;
+    }
+
+    /* decorative divider */
+    .divider{
+      height:1px;
+      background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:1px;
+      margin-top:6px;
+    }
+
+    /* footer */
+    .meta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:10px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    /* floating shapes / particles */
+    .particles{
+      position:absolute;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      overflow:hidden;
+      border-radius:calc(var(--card-radius) + 4px);
+    }
+    .particle{
+      position:absolute;
+      border-radius:999px;
+      filter: blur(12px);
+      opacity:0.12;
+      animation: floaty 10s ease-in-out infinite;
+      mix-blend-mode:screen;
+    }
+    .particle.p1{width:140px;height:140px; background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); left:-10%; top:10%; animation-duration:16s}
+    .particle.p2{width:90px;height:90px; background:linear-gradient(90deg, rgba(0,212,255,0.9), rgba(124,92,255,0.9)); right:6%; bottom:-10%; animation-duration:12s}
+    .particle.p3{width:60px;height:60px; background:linear-gradient(90deg, rgba(255,255,255,0.5), rgba(124,92,255,0.3)); left:40%; top:-6%; opacity:0.06; animation-duration:22s}
+    @keyframes floaty{
+      0%{transform:translateY(0) rotate(0deg) scale(1)}
+      50%{transform:translateY(-18px) rotate(12deg) scale(1.05)}
+      100%{transform:translateY(0) rotate(0deg) scale(1)}
+    }
+
+    /* accessibility: prefer-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      .gradient-orb, .particle, .btn, .logo-wrap svg { animation: none !important; transition: none !important; }
+    }
+
+    /* responsiveness tweaks */
+    @media (max-width:520px){
+      .left{padding:28px}
+      .logo-wrap{width:64px;height:64px}
+      h1{font-size:22px}
+      .container{gap:16px}
+    }
+
+    /* small helper */
+    .center{
+      display:flex;align-items:center;justify-content:center;
+    }
+    /* subtle enter animation */
+    @keyframes popIn {
+      from { transform: translateY(8px) scale(.995); opacity: 0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .left,.right{animation: popIn .48s cubic-bezier(.2,.9,.2,1)}
+  </style>
+</head>
+<body>
+  <div class="gradient-orb" aria-hidden="true"></div>
+
+  <main id="app" class="center" role="main" aria-labelledby="main-title">
+    <div class="container" role="article" aria-label="Removed page notice">
+      <section class="left" aria-labelledby="main-title">
+        <div class="title">
+          <div class="logo-wrap" aria-hidden="true">
+            <!-- Minimal abstract logo SVG -->
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="App logo">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0" stop-color="#fff" stop-opacity="0.9" />
+                  <stop offset="1" stop-color="#000" stop-opacity="0.08" />
+                </linearGradient>
+              </defs>
+              <rect x="6" y="6" width="52" height="52" rx="12" fill="url(#g1)"></rect>
+              <path d="M20 44c6-8 24-8 28-24" stroke="#021225" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.88"/>
+            </svg>
+          </div>
+
+          <div>
+            <h1 id="main-title">This page has been removed</h1>
+            <p class="lead">Removed by the owner for personal reasons. We apologize for any inconvenience — if you need more information or assistance, the developer is available to help.</p>
+          </div>
+        </div>
+
+        <div class="notice" role="status" aria-live="polite">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" fill="rgba(124,92,255,0.14)"></path>
+            <path d="M11 7h2v7h-2V7zm0 9h2v2h-2v-2z" fill="#fff"></path>
+          </svg>
+          <div class="text">
+            <strong style="display:block;margin-bottom:6px">Why you see this</strong>
+            The owner decided to remove this content for privacy/personal reasons. If you have important business or previously saved links pointing here, please contact the developer and they’ll assist you.
+            <div style="margin-top:8px" class="muted">If this is urgent, include your name, reason, and original URL when you contact the developer.</div>
+          </div>
+        </div>
+
+        <div class="divider" aria-hidden="true"></div>
+
+        <p class="muted" style="margin-top:6px">Tip: If you reached this page from a bookmark or search result, check the referring site or contact the person who shared the link.</p>
+      </section>
+
+      <aside class="right" aria-label="Contact developer">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span class="badge" aria-hidden="true">⚑ Notice</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div>
+              <div class="big">Removed — Owner request</div>
+              <div class="sub">Personal removal — limited info available</div>
+            </div>
+            <div style="text-align:right;color:var(--muted);font-size:12px">Updated: <strong style="color: #dfeeff">Today</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-top:6px;color:var(--muted);font-size:14px">
+          For further details, reach out to the developer below. Please be concise — include the original page URL and your contact method.
+        </div>
+
+        <div class="actions" role="group" aria-label="Developer contact actions">
+          <!-- mailto: replace developer@example.com with the real email before deploying -->
+          <a class="btn" href="mailto:developer@example.com?subject=Page%20Removed%20Inquiry&body=Hello%2C%0A%0AI%20am%20inquiring%20about%20the%20removed%20page.%20Original%20URL%3A%20%0A%0AReason%20for%20inquiry%3A%0A%0ARegards%2C%0A" title="Email the developer">Contact Developer</a>
+
+          <!-- copy developer contact (email) -->
+          <button class="btn secondary" id="copyBtn" title="Copy developer email to clipboard">Copy Email</button>
+        </div>
+
+        <a class="more" href="#" id="reportLink">Report an issue / Request help</a>
+
+        <div class="meta" style="margin-top:8px">
+          <div class="muted">Support available Monday–Friday</div>
+          <div class="muted">Privacy respected • No unwanted tracking</div>
+        </div>
+
+        <!-- decorative particle area in the right card -->
+        <div class="particles" aria-hidden="true">
+          <span class="particle p1"></span>
+          <span class="particle p2"></span>
+          <span class="particle p3"></span>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    // Developer contact - update this if you want a different default
+    (function(){
+      const developerEmail = "developer@example.com";
+
+      // Copy email to clipboard
+      const copyBtn = document.getElementById('copyBtn');
+      copyBtn.addEventListener('click', async function(){
+        try {
+          await navigator.clipboard.writeText(developerEmail);
+          copyBtn.textContent = "Copied ✓";
+          copyBtn.setAttribute('aria-label', 'Developer email copied');
+          setTimeout(()=>{ copyBtn.textContent = "Copy Email"; }, 2500);
+        } catch (err) {
+          // Fallback for older browsers
+          const ta = document.createElement('textarea');
+          ta.value = developerEmail;
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            copyBtn.textContent = "Copied ✓";
+            setTimeout(()=>{ copyBtn.textContent = "Copy Email"; }, 2500);
+          } finally {
+            document.body.removeChild(ta);
+          }
+        }
+      });
+
+      // Report link: open mailto prefilled to developer
+      const report = document.getElementById('reportLink');
+      report.addEventListener('click', function(e){
+        e.preventDefault();
+        const subject = encodeURIComponent('Report / Assistance: Removed Page');
+        const body = encodeURIComponent("Hello,\n\nI would like assistance regarding a removed page. Original URL: \n\nReason for inquiry:\n\nRegards,\n");
+        window.location.href = `mailto:${developerEmail}?subject=${subject}&body=${body}`;
+      });
+
+      // Small: replace "Today" text with real local date string for clarity
+      try {
+        const todayLabel = Array.from(document.querySelectorAll('.right .big')).find(el => el.textContent.includes('Removed'));
+        if (todayLabel) {
+          // Intentionally local and human readable
+          const dateEl = document.querySelector('.right div[style] strong');
+          if (dateEl) {
+            const now = new Date();
+            const opts = { year:'numeric', month:'short', day:'numeric' };
+            dateEl.textContent = now.toLocaleDateString(undefined, opts);
+          }
+        }
+      } catch(e){ /* no-op */ }
+
+      // Accessibility: enable keyboard activation for actions
+      document.querySelectorAll('.btn, .more').forEach(el=>{
+        el.addEventListener('keyup', (ev)=>{
+          if(ev.key === 'Enter' || ev.key === ' ') el.click();
+        });
+      });
+
+      // Prefer reduced motion respects - keep animations subtle if user allows motion
+      // (All heavy animations already disabled via CSS media query)
+    })();
+  </script>
+</body>
+</html>

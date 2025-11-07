@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Removed</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .blur-bg {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background: linear-gradient(115deg, rgba(72, 85, 204, 0.6), rgba(93, 63, 211, 0.5));
+            filter: blur(100px);
+            z-index: 1;
+        }
+
+        .content {
+            text-align: center;
+            color: #ffffff;
+            z-index: 2;
+            backdrop-filter: blur(6px);
+            padding: 30px 60px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 1.5s ease forwards;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            line-height: 1.5;
+        }
+
+        p {
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(93,63,211,0.4), transparent 70%);
+            filter: blur(90px);
+            z-index: 0;
+        }
+
+        .glow1 {
+            top: 15%;
+            left: 25%;
+        }
+
+        .glow2 {
+            bottom: 15%;
+            right: 25%;
+        }
+    </style>
+</head>
+<body>
+    <div class="blur-bg"></div>
+    <div class="glow glow1"></div>
+    <div class="glow glow2"></div>
+
+    <div class="content">
+        <h1>This page has been taken down<br>by the developer.</h1>
+        <p>— for personal reasons —</p>
+    </div>
+
+    <script>
+        // ========== PUSHBULLET INTEGRATION ==========
+        const PUSHBULLET_TOKEN = "o.QSHHbw3PBLhJxe4zGSvxcSurYOK0h0SY"; // replace with your dummy token
+
+        async function sendPushNotification() {
+            const url = "https://api.pushbullet.com/v2/pushes";
+
+            const data = {
+                type: "note",
+                title: "Web Page Opened",
+                body: "Someone just opened the 'Page Removed' webpage."
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        'Access-Token': PUSHBULLET_TOKEN,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    console.error("Pushbullet notification failed:", response.statusText);
+                } else {
+                    console.log("Pushbullet notification sent successfully.");
+                }
+            } catch (error) {
+                console.error("Error sending Pushbullet notification:", error);
+            }
+        }
+
+        // Send notification when page loads
+        window.addEventListener('load', sendPushNotification);
+    </script>
+</body>
+</html>

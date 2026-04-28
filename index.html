@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Priority Notification</title>
+
   <style>
-    /* Body with dark gradient background */
     body {
       margin: 0;
       height: 100vh;
@@ -25,12 +25,10 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Floating hearts (base style) */
     .heart {
       position: absolute;
       font-size: 80px;
       color: rgba(255, 100, 150, 0.25);
-      user-select: none;
       pointer-events: none;
       animation: floatUp linear forwards;
     }
@@ -43,7 +41,6 @@
       100% { transform: translateY(-120vh) translateX(var(--x-move)); opacity: 0; }
     }
 
-    /* Frosted-glass effect container */
     .container {
       position: relative;
       z-index: 2;
@@ -60,12 +57,10 @@
     h1 {
       margin-bottom: 20px;
       font-size: 26px;
-      font-weight: 600;
     }
 
     p {
       margin-bottom: 30px;
-      font-size: 16px;
       opacity: 0.9;
     }
 
@@ -79,91 +74,74 @@
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(255, 36, 102, 0.5);
-      transition: transform 0.2s, box-shadow 0.3s;
+      transition: 0.2s;
     }
 
     button:hover {
       transform: scale(1.07);
-      box-shadow: 0 6px 20px rgba(255, 36, 102, 0.7);
     }
   </style>
 </head>
+
 <body>
-  <!-- Main container -->
-  <div class="container">
-    <h1>✨ You Are My Priority ✨</h1>
-    <p>Press the button below to notify me — I’ll reach you as soon as possible.</p>
-    <button onclick="sendNotification()">Notify Me</button>
-  </div>
 
-  <script>
-    // Function to spawn a heart
-    function spawnHeart() {
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.textContent = "❤";
+<div class="container">
+  <h1>✨ You Are My Priority ✨</h1>
+  <p>Press the button below to notify me — I’ll reach you as soon as possible.</p>
+  <button onclick="sendNotification()">Notify Me</button>
+</div>
 
-      // Random horizontal position
-      const left = Math.random() * 100;
-      heart.style.left = left + "vw";
+<script>
+  // Floating hearts
+  function spawnHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = "❤";
 
-      // Random sideways movement
-      const xMove = (Math.random() * 60 - 30) + "px";
-      heart.style.setProperty("--x-move", xMove);
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.setProperty("--x-move", (Math.random() * 60 - 30) + "px");
+    heart.style.fontSize = (Math.random() * 30 + 70) + "px";
+    const duration = Math.random() * 8 + 10;
+    heart.style.animationDuration = duration + "s";
 
-      // Random size (70–100px)
-      const size = Math.random() * 30 + 70;
-      heart.style.fontSize = size + "px";
+    document.body.appendChild(heart);
 
-      // Random duration (10–18s)
-      const duration = Math.random() * 8 + 10;
-      heart.style.animationDuration = duration + "s";
+    setTimeout(() => heart.remove(), duration * 1000);
+  }
 
-      // Add to page
-      document.body.appendChild(heart);
+  setInterval(spawnHeart, 1500);
+  for (let i = 0; i < 6; i++) spawnHeart();
 
-      // Remove after animation ends
-      setTimeout(() => {
-        heart.remove();
-      }, duration * 1000);
-    }
+  // Telegram Notification
+  async function sendNotification() {
+    const token = "8568542100:AAFpUQ2U-lKLDge9djSK5LgsyvlKcT8ZEq8";
+    const chatId = "8552546080";
 
-    // Keep spawning hearts every 1.5s
-    setInterval(spawnHeart, 1500);
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: `🚨 Priority Alert!\nSomeone clicked the button.\nTime: ${new Date().toLocaleString()}`
+        })
+      });
 
-    // Spawn several immediately so screen isn’t empty
-    for (let i = 0; i < 6; i++) {
-      spawnHeart();
-    }
+      const data = await res.json();
 
-    // Pushbullet notification
-    async function sendNotification() {
-      const accessToken = "o.Cd0bg3PX7MGJGsRoTaEEOcxPEVB90B4O";
-      const message = "🚨 Priority Alert: Someone needs you now!";
-
-      try {
-        const response = await fetch("https://api.pushbullet.com/v2/pushes", {
-          method: "POST",
-          headers: {
-            "Access-Token": accessToken,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            type: "note",
-            title: "Priority Notification",
-            body: message
-          })
-        });
-
-        if (response.ok) {
-          alert("✅ Notification sent successfully!");
-        } else {
-          alert("⚠️ Error sending notification.");
-        }
-      } catch (error) {
-        alert("❌ Failed to connect. Check your internet.");
+      if (data.ok) {
+        alert("✅ Notification sent!");
+      } else {
+        alert("⚠️ " + data.description);
       }
+
+    } catch (err) {
+      alert("❌ Network error");
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>

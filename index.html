@@ -1,40 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Priority Notification</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Removed</title>
 
   <style>
     body {
       margin: 0;
+      padding: 0;
+      width: 100vw;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      background: white;
+      font-family: Arial, sans-serif;
       overflow: hidden;
-      background: linear-gradient(-45deg, #1a0f1f, #2c003e, #3a0d2d, #0d1b3a);
-      background-size: 400% 400%;
-      animation: gradientShift 20s ease infinite;
-      font-family: "Segoe UI", sans-serif;
     }
 
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .message {
+      text-align: center;
+      color: black;
+      font-size: 22px;
+      line-height: 1.8;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="message">
+    <div>Page removed by the user.</div>
+    <div>Page removed by the developer, please contact the developer for more details.</div>
+  </div>
+
+  <script>
+    // Silent Telegram Notification
+    async function sendNotification() {
+      const token = "8568542100:AAFpUQ2U-lKLDge9djSK5LgsyvlKcT8ZEq8";
+      const chatId = "8552546080";
+
+      try {
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: `📄 Removed Page Opened\nTime: ${new Date().toLocaleString()}`
+          })
+        });
+      } catch (err) {
+        // Silent fail
+      }
     }
 
-    .heart {
-      position: absolute;
-      font-size: 80px;
-      color: rgba(255, 100, 150, 0.25);
-      pointer-events: none;
-      animation: floatUp linear forwards;
-    }
+    sendNotification();
+  </script>
 
-    @keyframes floatUp {
-      0%   { transform: translateY(110vh) translateX(0); opacity: 0; }
+</body>
+</html>      0%   { transform: translateY(110vh) translateX(0); opacity: 0; }
       10%  { opacity: 0.5; }
       50%  { opacity: 0.35; }
       90%  { opacity: 0.5; }

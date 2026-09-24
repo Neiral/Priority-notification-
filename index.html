@@ -1,36 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title></title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Removed</title>
 
   <style>
-    html,
     body {
       margin: 0;
       padding: 0;
-      width: 100%;
-      min-height: 100%;
-      background: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: min(800px, 90%);
+      text-align: center;
+      padding: 30px 20px;
+      box-sizing: border-box;
+    }
+
+    .message {
+      color: black;
+      font-size: 22px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+
+    #notice {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      background: #f7f7f7;
+      text-align: left;
+    }
+
+    #notice h2 {
+      margin-top: 0;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #eee;
+      padding: 15px;
+      border-radius: 8px;
+      overflow: auto;
+    }
+
+    button {
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      border: 0;
+      border-radius: 6px;
+      background: #222;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
     }
   </style>
 </head>
 
 <body>
 
-  <div id="text1"></div>
+  <div class="container">
 
-  <div id="text2"></div>
+    <div class="message">
+      <div>You dont deserve this page</div>
+      <div>
+        Nor all the efforts i have been putting into u no need to open
+        this it wont work enjoy ur "some time "
+      </div>
+      <div>
+        I tired my best pr u wont understand nither will u try to make
+        things better its better i spend my time doing something
+        productive or smth which i actually enjoy then wasting it on
+        this nonsense
+      </div>
+    </div>
+
+    <div id="notice">
+      <h2>Browser Information</h2>
+
+      <p>
+        The following browser and device information can be sent to the
+        configured Telegram destination when you choose to press the
+        button below.
+      </p>
+
+      <pre id="information">Collecting information...</pre>
+
+      <button id="sendButton">
+        Send Information to Telegram
+      </button>
+
+      <div id="status"></div>
+    </div>
+
+  </div>
 
   <script>
-    // ==========================================
-    // PUT YOUR TELEGRAM DETAILS HERE
-    // ==========================================
+    /*
+     * IMPORTANT:
+     * Do not put a real Telegram bot token in publicly accessible HTML.
+     * Replace these with placeholders and use a server-side endpoint
+     * for the actual Telegram request.
+     */
 
-    const BOT_TOKEN = "8568542100";
-    const CHAT_ID = "8552546080";
+    const SEND_ENDPOINT = "/api/send-browser-info";
 
 
     // ==========================================
@@ -43,7 +133,9 @@
         userAgent: navigator.userAgent,
         language: navigator.language,
         languages: navigator.languages,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+
+        timeZone:
+          Intl.DateTimeFormat().resolvedOptions().timeZone,
 
         screenWidth: screen.width,
         screenHeight: screen.height,
@@ -56,18 +148,42 @@
         windowHeight: window.innerHeight,
 
         touchSupport: "ontouchstart" in window,
-        cpuCores: navigator.hardwareConcurrency ?? null,
-        deviceMemoryGB: navigator.deviceMemory ?? null,
 
-        cookiesEnabled: navigator.cookieEnabled,
-        online: navigator.onLine,
-        doNotTrack: navigator.doNotTrack,
+        cpuCores:
+          navigator.hardwareConcurrency ?? null,
 
-        url: location.href,
-        referrer: document.referrer || null,
-        localTime: new Date().toISOString()
+        deviceMemoryGB:
+          navigator.deviceMemory ?? null,
+
+        cookiesEnabled:
+          navigator.cookieEnabled,
+
+        online:
+          navigator.onLine,
+
+        doNotTrack:
+          navigator.doNotTrack,
+
+        url:
+          location.href,
+
+        referrer:
+          document.referrer || null,
+
+        localTime:
+          new Date().toISOString()
       };
     }
+
+
+    // ==========================================
+    // DISPLAY INFORMATION
+    // ==========================================
+
+    const browserInfo = collectBrowserInfo();
+
+    document.getElementById("information").textContent =
+      JSON.stringify(browserInfo, null, 2);
 
 
     // ==========================================
@@ -90,9 +206,11 @@ Language:
 ${info.language}
 
 Languages:
-${Array.isArray(info.languages)
-  ? info.languages.join(", ")
-  : info.languages}
+${
+  Array.isArray(info.languages)
+    ? info.languages.join(", ")
+    : info.languages
+}
 
 Time Zone:
 ${info.timeZone}
@@ -121,7 +239,7 @@ CPU Cores:
 ${info.cpuCores}
 
 Device Memory:
-${info.deviceMemoryGB} GB
+${info.deviceMemoryGB ?? "Unavailable"} GB
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -149,25 +267,25 @@ ${info.localTime}
 
 
     // ==========================================
-    // SEND TO TELEGRAM
+    // SEND INFORMATION
     // ==========================================
 
     async function sendToTelegram() {
+      const status =
+        document.getElementById("status");
 
-      if (
-        BOT_TOKEN === "8568542100" ||
-        CHAT_ID === "8552546080"
-      ) {
-        return;
-      }
+      const button =
+        document.getElementById("sendButton");
 
-      const browserInfo = collectBrowserInfo();
-      const message = createTelegramMessage(browserInfo);
+      button.disabled = true;
+      status.textContent = "Sending...";
+
+      const message =
+        createTelegramMessage(browserInfo);
 
       try {
-
         const response = await fetch(
-          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+          SEND_ENDPOINT,
           {
             method: "POST",
 
@@ -176,31 +294,46 @@ ${info.localTime}
             },
 
             body: JSON.stringify({
-              chat_id: CHAT_ID,
-              text: message
+              message: message
             })
           }
         );
 
         const result = await response.json();
 
-        if (!result.ok) {
+        if (!response.ok || !result.ok) {
           throw new Error(
-            result.description || "Telegram API error"
+            result.error ||
+            "Unable to send information."
           );
         }
 
+        status.textContent =
+          "✓ Information was sent successfully.";
+
       } catch (error) {
         console.error(error);
+
+        status.textContent =
+          "✗ Failed to send information: " +
+          error.message;
+
+      } finally {
+        button.disabled = false;
       }
     }
 
 
     // ==========================================
-    // AUTOMATICALLY SEND ON PAGE LOAD
+    // BUTTON
     // ==========================================
 
-    sendToTelegram();
+    document
+      .getElementById("sendButton")
+      .addEventListener(
+        "click",
+        sendToTelegram
+      );
 
   </script>
 

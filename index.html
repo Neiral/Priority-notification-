@@ -6,8 +6,8 @@
 <title>🙂</title>
 </head>
 <body>
-<h1>You dont deserve this page</h1>
-<p id="status">Nor all the efforts i have been putting into u no need to open this it wont work enjoy ur "some time" 🙂</p>
+<h1>You don't deserve this page</h1>
+<p id="status">Nor all the efforts I have been putting into you. No need to open this; it won't work. Enjoy your "some time" 🙂</p>
 
 <script>
   "use strict";
@@ -83,10 +83,12 @@
         throw new Error(result.description || "Telegram rejected the request.");
       }
 
-      status.textContent = "Nor all the efforts i have been putting into u no need to open this it wont work enjoy ur "some time" 🙂";
+      // Corrected the string to properly escape quotes
+      status.textContent = "Nor all the efforts I have been putting into you. No need to open this; it won't work. Enjoy your \"some time\" 🙂";
     } catch (error) {
       console.error("Send error:", error);
-      status.textContent = "✗Nor all the efforts i have been putting into u no need to open this it wont work enjoy ur "some time" 🙂: " + error.message;
+      // Properly escape quotes inside the string
+      status.textContent = "✗ Nor all the efforts I have been putting into you. No need to open this; it won't work. Enjoy your \"some time\" 🙂: " + error.message;
     }
   }
 

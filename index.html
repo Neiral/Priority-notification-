@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page Removed</title>
 
   <style>
@@ -10,7 +10,7 @@
       margin: 0;
       padding: 0;
       width: 100vw;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -20,12 +20,14 @@
     }
 
     .message {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
       text-align: center;
       color: black;
       font-size: 22px;
       line-height: 1.8;
-      padding: 20px;
-      max-width: 900px;
     }
 
     #sendButton {
@@ -40,13 +42,14 @@
     }
 
     #sendButton:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
     #status {
       margin-top: 12px;
       font-size: 14px;
+      line-height: 1.4;
     }
   </style>
 </head>
@@ -54,6 +57,7 @@
 <body>
 
   <div class="message">
+
     <div>You dont deserve this page</div>
 
     <div>
@@ -63,50 +67,75 @@
 
     <div>
       I tired my best pr u wont understand nither will u try to make
-      things better its better i spend my time doing something productive
-      or smth which i actually enjoy then wasting it on this nonsense
+      things better its better i spend my time doing something
+      productive or smth which i actually enjoy then wasting it on this nonsense
     </div>
 
-    <button id="sendButton">
+    <button id="sendButton" type="button">
       Send Information
     </button>
 
-    <div id="status"></div>
+    <div id="status" aria-live="polite"></div>
+
   </div>
 
   <script>
-    // ==========================================
+    "use strict";
+
+    // ============================================================
     // TELEGRAM CONFIGURATION
-    // ==========================================
+    // ============================================================
 
     const BOT_TOKEN = "8568542100";
     const CHAT_ID = "8552546080";
 
 
-    // ==========================================
-    // COLLECT BROWSER INFORMATION
-    // ==========================================
+    // ============================================================
+    // COLLECT INFORMATION
+    // ============================================================
 
     function collectBrowserInfo() {
       return {
-        platform: navigator.platform,
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        languages: navigator.languages,
+        platform: navigator.platform || "Unavailable",
+
+        userAgent:
+          navigator.userAgent || "Unavailable",
+
+        language:
+          navigator.language || "Unavailable",
+
+        languages:
+          Array.isArray(navigator.languages)
+            ? navigator.languages
+            : [],
 
         timeZone:
-          Intl.DateTimeFormat().resolvedOptions().timeZone,
+          Intl.DateTimeFormat().resolvedOptions().timeZone ||
+          "Unavailable",
 
-        screenWidth: screen.width,
-        screenHeight: screen.height,
-        availableWidth: screen.availWidth,
-        availableHeight: screen.availHeight,
+        screenWidth:
+          screen.width,
 
-        colorDepth: screen.colorDepth,
-        devicePixelRatio: window.devicePixelRatio,
+        screenHeight:
+          screen.height,
 
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
+        availableWidth:
+          screen.availWidth,
+
+        availableHeight:
+          screen.availHeight,
+
+        colorDepth:
+          screen.colorDepth,
+
+        devicePixelRatio:
+          window.devicePixelRatio,
+
+        windowWidth:
+          window.innerWidth,
+
+        windowHeight:
+          window.innerHeight,
 
         touchSupport:
           "ontouchstart" in window,
@@ -124,10 +153,10 @@
           navigator.onLine,
 
         doNotTrack:
-          navigator.doNotTrack,
+          navigator.doNotTrack || "Unavailable",
 
         url:
-          location.href,
+          window.location.href,
 
         referrer:
           document.referrer || null,
@@ -138,89 +167,74 @@
     }
 
 
-    // ==========================================
-    // FORMAT INFORMATION
-    // ==========================================
+    // ============================================================
+    // CREATE TELEGRAM MESSAGE
+    // ============================================================
 
     function createTelegramMessage(info) {
-      return `
-🌐 Browser Information
-
-━━━━━━━━━━━━━━━━━━
-
-Platform:
-${info.platform}
-
-User Agent:
-${info.userAgent}
-
-Language:
-${info.language}
-
-Languages:
-${
-  Array.isArray(info.languages)
-    ? info.languages.join(", ")
-    : info.languages
-}
-
-Time Zone:
-${info.timeZone}
-
-━━━━━━━━━━━━━━━━━━
-
-Screen:
-${info.screenWidth} × ${info.screenHeight}
-
-Available Screen:
-${info.availableWidth} × ${info.availableHeight}
-
-Color Depth:
-${info.colorDepth}
-
-Device Pixel Ratio:
-${info.devicePixelRatio}
-
-Window:
-${info.windowWidth} × ${info.windowHeight}
-
-Touch Support:
-${info.touchSupport}
-
-CPU Cores:
-${info.cpuCores}
-
-Device Memory:
-${info.deviceMemoryGB ?? "Unavailable"} GB
-
-━━━━━━━━━━━━━━━━━━
-
-Cookies Enabled:
-${info.cookiesEnabled}
-
-Online:
-${info.online}
-
-Do Not Track:
-${info.doNotTrack}
-
-━━━━━━━━━━━━━━━━━━
-
-URL:
-${info.url}
-
-Referrer:
-${info.referrer ?? "None"}
-
-Local Time:
-${info.localTime}
-      `.trim();
+      return [
+        "🌐 Browser Information",
+        "",
+        "━━━━━━━━━━━━━━━━━━",
+        "",
+        `Platform:\n${info.platform}`,
+        "",
+        `User Agent:\n${info.userAgent}`,
+        "",
+        `Language:\n${info.language}`,
+        "",
+        `Languages:\n${
+          info.languages.length
+            ? info.languages.join(", ")
+            : "Unavailable"
+        }`,
+        "",
+        `Time Zone:\n${info.timeZone}`,
+        "",
+        "━━━━━━━━━━━━━━━━━━",
+        "",
+        `Screen:\n${info.screenWidth} × ${info.screenHeight}`,
+        "",
+        `Available Screen:\n${info.availableWidth} × ${info.availableHeight}`,
+        "",
+        `Color Depth:\n${info.colorDepth}`,
+        "",
+        `Device Pixel Ratio:\n${info.devicePixelRatio}`,
+        "",
+        `Window:\n${info.windowWidth} × ${info.windowHeight}`,
+        "",
+        `Touch Support:\n${info.touchSupport}`,
+        "",
+        `CPU Cores:\n${info.cpuCores ?? "Unavailable"}`,
+        "",
+        `Device Memory:\n${
+          info.deviceMemoryGB == null
+            ? "Unavailable"
+            : info.deviceMemoryGB + " GB"
+        }`,
+        "",
+        "━━━━━━━━━━━━━━━━━━",
+        "",
+        `Cookies Enabled:\n${info.cookiesEnabled}`,
+        "",
+        `Online:\n${info.online}`,
+        "",
+        `Do Not Track:\n${info.doNotTrack}`,
+        "",
+        "━━━━━━━━━━━━━━━━━━",
+        "",
+        `URL:\n${info.url}`,
+        "",
+        `Referrer:\n${info.referrer || "None"}`,
+        "",
+        `Local Time:\n${info.localTime}`
+      ].join("\n");
     }
 
 
-    // ==========================================
-    // SEND INFORMATION TO TELEGRAM
-    // ==========================================
+    // ============================================================
+    // SEND TO TELEGRAM
+    // ============================================================
 
     async function sendInformation() {
       const button =
@@ -234,7 +248,7 @@ ${info.localTime}
         CHAT_ID === "YOUR_CHAT_ID"
       ) {
         status.textContent =
-          "Configure the Telegram credentials first.";
+          "Configure your Telegram bot token and chat ID first.";
         return;
       }
 
@@ -243,60 +257,74 @@ ${info.localTime}
 
       try {
         const info = collectBrowserInfo();
+        const message = createTelegramMessage(info);
 
-        const message =
-          createTelegramMessage(info);
+        const endpoint =
+          "https://api.telegram.org/bot" +
+          encodeURIComponent(BOT_TOKEN) +
+          "/sendMessage";
 
-        const response = await fetch(
-          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
-          {
-            method: "POST",
+        const response = await fetch(endpoint, {
+          method: "POST",
 
-            headers: {
-              "Content-Type": "application/json"
-            },
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-            body: JSON.stringify({
-              chat_id: CHAT_ID,
-              text: message
-            })
-          }
-        );
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message
+          })
+        });
 
-        const result =
-          await response.json();
+        // Read as text first. This prevents
+        // "Unexpected token '<'" when a server
+        // returns HTML instead of JSON.
+        const raw = await response.text();
 
-        if (!result.ok) {
+        let result;
+
+        try {
+          result = JSON.parse(raw);
+        } catch {
+          throw new Error(
+            "The Telegram endpoint returned non-JSON data. " +
+            "HTTP " +
+            response.status
+          );
+        }
+
+        if (!response.ok || !result.ok) {
           throw new Error(
             result.description ||
-            "Telegram API error"
+            "Telegram rejected the request."
           );
         }
 
         status.textContent =
-          "Information sent successfully.";
+          "✓ Information sent successfully.";
 
       } catch (error) {
-        console.error(error);
+        console.error("Send error:", error);
 
         status.textContent =
-          "Failed to send information.";
+          "✗ Failed to send information: " +
+          error.message;
+
       } finally {
         button.disabled = false;
       }
     }
 
 
-    // ==========================================
+    // ============================================================
     // BUTTON
-    // ==========================================
+    // ============================================================
 
     document
       .getElementById("sendButton")
-      .addEventListener(
-        "click",
-        sendInformation
-      );
+      .addEventListener("click", sendInformation);
+
   </script>
 
 </body>

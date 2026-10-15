@@ -3,54 +3,167 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Button</title>
+  <title>Priority Notification</title>
+  <style>
+    /* Body with dark gradient background */
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: linear-gradient(-45deg, #1a0f1f, #2c003e, #3a0d2d, #0d1b3a);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating hearts (base style) */
+    .heart {
+      position: absolute;
+      font-size: 80px;
+      color: rgba(255, 100, 150, 0.25);
+      user-select: none;
+      pointer-events: none;
+      animation: floatUp linear forwards;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(110vh) translateX(0); opacity: 0; }
+      10%  { opacity: 0.5; }
+      50%  { opacity: 0.35; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-120vh) translateX(var(--x-move)); opacity: 0; }
+    }
+
+    /* Frosted-glass effect container */
+    .container {
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      max-width: 400px;
+      color: #fff;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    p {
+      margin-bottom: 30px;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    button {
+      background: linear-gradient(135deg, #ff5fa2, #ff2466);
+      border: none;
+      border-radius: 50px;
+      padding: 15px 40px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 36, 102, 0.5);
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 6px 20px rgba(255, 36, 102, 0.7);
+    }
+  </style>
 </head>
 <body>
-
-  <button id="clickButton">Click Me</button>
-  <p id="status"></p>
+  <!-- Main container -->
+  <div class="container">
+    <h1>✨ You Are My Priority ✨</h1>
+    <p>Press the button below to notify me — I’ll reach you as soon as possible.</p>
+    <button onclick="sendNotification()">Notify Me</button>
+  </div>
 
   <script>
-    "use strict";
+    // Function to spawn a heart
+    function spawnHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "❤";
 
-    const BOT_TOKEN ban= "8568542100:AAEl5NoetK9vf2vKgNSHdH-qgJkmLAIVblk";
-    const CHAT_ID = "8552546080";
+      // Random horizontal position
+      const left = Math.random() * 100;
+      heart.style.left = left + "vw";
 
-    document
-      .getElementById("clickButton")
-      .addEventListener("click", async () => {
-        const status = document.getElementById("status");
+      // Random sideways movement
+      const xMove = (Math.random() * 60 - 30) + "px";
+      heart.style.setProperty("--x-move", xMove);
 
-        status.textContent = "Sending notification...";
+      // Random size (70–100px)
+      const size = Math.random() * 30 + 70;
+      heart.style.fontSize = size + "px";
 
-        try {
-          const response = await fetch(
-            `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: "Button clicked"
-              })
-            }
-          );
+      // Random duration (10–18s)
+      const duration = Math.random() * 8 + 10;
+      heart.style.animationDuration = duration + "s";
 
-          const result = await response.json();
+      // Add to page
+      document.body.appendChild(heart);
 
-          if (!response.ok || !result.ok) {
-            throw new Error("Failed to send notification.");
-          }
+      // Remove after animation ends
+      setTimeout(() => {
+        heart.remove();
+      }, duration * 1000);
+    }
 
-          status.textContent = "Notification sent!";
-        } catch (error) {
-          console.error(error);
-          status.textContent = "Failed to send notification.";
+    // Keep spawning hearts every 1.5s
+    setInterval(spawnHeart, 1500);
+
+    // Spawn several immediately so screen isn’t empty
+    for (let i = 0; i < 6; i++) {
+      spawnHeart();
+    }
+
+    // Pushbullet notification
+    async function sendNotification() {
+      const accessToken = "8568542100:AAEl5NoetK9vf2vKgNSHdH-qgJkmLAIVblk";
+      const message = "🚨 Priority Alert: Someone needs you now!";
+
+      try {
+        const response = await fetch("https://api.pushbullet.com/v2/pushes", {
+          method: "POST",
+          headers: {
+            "Access-Token": accessToken,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            type: "note",
+            title: "Priority Notification",
+            body: message
+          })
+        });
+
+        if (response.ok) {
+          alert("✅ Notification sent successfully!");
+        } else {
+          alert("⚠️ Error sending notification.");
         }
-      });
+      } catch (error) {
+        alert("❌ Failed to connect. Check your internet.");
+      }
+    }
   </script>
-
 </body>
 </html>
